@@ -1,0 +1,2 @@
+go get -u github.com/jmoiron/sqlx
+ go get -u github.com/dgrijalva/jwt-go

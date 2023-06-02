@@ -1,0 +1,5 @@
+cd C:\Users\Андрей\Desktop\seo_courses\
+
+
+migrate -path ./schema -database 'postgres://postgres:1@localhost:5432/courses?sslmode=disable' up  
+migrate -path ./schema -database 'postgres://postgres:1@localhost:5432/courses?sslmode=disable' down

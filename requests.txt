@@ -1,0 +1,12 @@
+POST http://localhost:8000/auth/sign-in === авторизиация
+{
+    "username": "Alex",
+    "password": "123"
+}
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODQ5ODY1MDYsImlhdCI6MTY4NDk0MzMwNiwidXNlcl9pZCI6Mn0.xlNSSNlL1xVyfjHxRHASiL1y8RQ0_V-ashs9lLuCkQs
+
+POST http://localhost:8000/api/courses
+{
+    "title": "Python-разработчик",
+    "description": "Обучение программированию для новичков с нуля"
+}
