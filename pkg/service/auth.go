@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
-	"seo_courses"
+	"seo_courses/pkg/dto"
 	"seo_courses/pkg/repository"
 	"time"
 )
@@ -29,7 +29,7 @@ func NewAuthService(repo repository.Authorization) *AuthService {
 	return &AuthService{repo: repo}
 }
 
-func (s *AuthService) CreateUser(user seo_courses.User) (int, error) {
+func (s *AuthService) CreateUser(user dto.User) (int, error) {
 	user.Password = generatePasswordHash(user.Password)
 	return s.repo.CreateUser(user)
 }

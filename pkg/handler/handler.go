@@ -17,12 +17,17 @@ func NewHandler(services *service.Service) *Handler {
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
 
-	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:5173"}        // Разрешенные источники запросов
-	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE"} // Разрешенные методы
-	config.AllowHeaders = []string{"Content-Type"}                 // Разрешенные заголовки
-	router.Use(cors.New(config))
-
+	//config := cors.DefaultConfig()
+	//config.AllowAllOrigins = true
+	//config.AllowOrigins = []string{"http://localhost:5173", "http://localhost:63342"} // Разрешенные источники запросов
+	//config.AllowOrigins = []string{"*"}                                       // Разрешенные источники запросов
+	//config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"} // Разрешенные методы
+	//config.AllowHeaders = []string{"Content-Type"}                            // Разрешенные заголовки
+	//router.Use(cors.New(config))
+	router.Use(cors.Default())
+	//router.Use(corsHeader)
+	router.GET("/user", h.index)
+	router.GET("/admin", h.admin)
 	auth := router.Group("/auth")
 	{
 		auth.POST("/sign-up", h.signUp)
@@ -34,9 +39,11 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		{
 			courses.POST("/", h.createCourse)
 			courses.GET("/", h.getAllCourses)
-			courses.GET("/:id", h.getCourseById)
+			courses.GET("/user", h.getCoursesByIdUser)
 			courses.PUT("/:id", h.updateCourse)
 			courses.DELETE("/:id", h.deleteCourse)
+
+			courses.POST("/subscribe", h.subscribeUser)
 
 			topics := courses.Group(":id/topics")
 			{
@@ -47,6 +54,13 @@ func (h *Handler) InitRoutes() *gin.Engine {
 				topics.DELETE("/:topic_id", h.deleteTopic)
 			}
 		}
+		forms := api.Group("/forms")
+		{
+			forms.GET("/questions/:form_id", h.GetForm)
+			forms.POST("/preferences", h.UserPreferences)
+			forms.POST("/preferences/recommendation", h.createRecommendation)
+		}
+
 	}
 	return router
 }

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+</head>
+<body>
+<strong>ADMIN</strong>
+<form id="myForm">
+    <label for="username">Name</label><br>
+    <input type="text" id="username" name="username"><br>
+
+    <label for="password">Password</label><br>
+    <input type="text" id="password" name="password"><br>
+
+    <input type="submit" value="Submit">
+
+</form>
+<script>
+    const form = document.querySelector('#myForm');
+    let token = "";
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+        const body = {};
+
+        for (let pair of formData.entries()) {
+            body[pair[0]] = pair[1];
+        }
+
+        const response = await fetch('http://localhost:8000/auth/sign-in', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        });
+
+        if (response.ok) {
+            const tokenJson = await response.json();
+            token = tokenJson["token"];
+            console.log(`>>> ${token}`);
+            form.style.display="none";
+            await renderCourses();
+            // window.location.href = '/success';
+        } else {
+            alert('Error submitting form');
+        }
+    });
+    async function renderCourses() {
+        const response = await fetch('http://localhost:8000/api/courses', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        if (response.ok) {
+            const coursesJson = await response.json();
+            const data = coursesJson["data"];
+            const table = document.createElement('table');
+            let tr = document.createElement('tr');
+            table.appendChild(tr);
+
+            let th = document.createElement('th');
+            tr.appendChild(th);
+            th.appendChild(document.createTextNode("title"));
+            th = document.createElement('th');
+            tr.appendChild(th);
+            th.appendChild(document.createTextNode("description"));
+            data.forEach(function (o) {
+                tr = document.createElement('tr');
+                table.appendChild(tr);
+                th = document.createElement('th');
+                th.appendChild(document.createTextNode(o["title"]));
+                tr.appendChild(th);
+                th = document.createElement('th');
+                th.appendChild(document.createTextNode(o["description"]));
+                tr.appendChild(th);
+            });
+
+            document.body.appendChild(table);
+
+        } else {
+            alert('Error submitting form');
+        }
+    }
+
+</script>
+</body>
+</html>

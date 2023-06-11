@@ -1,6 +1,6 @@
 CREATE TABLE users
 (
-    id            serial       not null unique,
+    id SERIAL PRIMARY KEY,
     name          varchar(255) ,
     username      varchar(255) not null unique,
     password_hash varchar(255) not null
@@ -9,7 +9,13 @@ CREATE TABLE users
 CREATE TABLE courses (
     id SERIAL PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
-    description TEXT
+    description TEXT,
+    difficulty_level INT NOT NULL,
+    field_of_activity VARCHAR(50) NOT NULL,
+    duration_days INT NOT NULL,
+    lang VARCHAR(50) NOT NULL,
+    rating NUMERIC(3,2) DEFAULT 0.00,
+    author VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE user_courses (
@@ -26,3 +32,28 @@ CREATE TABLE topics (
     materials TEXT,
     assignments TEXT
 );
+
+
+CREATE TABLE form (
+    id SERIAL PRIMARY KEY ,
+    name text
+);
+
+CREATE TABLE questions (
+    id SERIAL PRIMARY KEY ,
+    question TEXT,
+    form_id int references form(id)
+);
+
+CREATE TABLE answers (
+    id SERIAL PRIMARY KEY ,
+    user_id INT references users(id),
+    form_id INT REFERENCES  form(id),
+    difficulty_level INT NOT NULL,
+    field_of_activity VARCHAR(50) NOT NULL,
+    duration_days INT NOT NULL,
+    lang VARCHAR(50) NOT NULL,
+    rating NUMERIC(3,2) DEFAULT 0.00,
+    author VARCHAR(100) NOT NULL
+);
+

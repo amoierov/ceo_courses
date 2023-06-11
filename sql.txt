@@ -1,0 +1,180 @@
+SELECT course_id, max(topics.difficulty) FROM topics JOIN answers on topics.domain = answers.domain group by course_id
+C:\Program Files\PostgreSQL\14\bin\psql.exe" -U postgres
+
+select max(id) from answers where user_id = $1
+
+SELECT courses.id, courses.difficulty_level, answers.difficulty_level FROM courses JOIN answers on courses.field_of_activity = answers.field_of_activity where answers.id = $1
+SELECT courses.id, courses.difficulty_level, answers.difficulty_level FROM courses JOIN answers on courses.field_of_activity = answers.field_of_activity where answers.id = (
+select max(id) from answers where user_id = $1)
+[
+{course_id:	1, title... , difficulty_relevance: "easy"}
+{course_id:2, d_r: "hard". "medium"
+
+SELECT courses.id, courses.difficulty_level, answers.difficulty_level FROM courses JOIN answers on courses.field_of_activity = answers.field_of_activity where answers.id = (
+    select max(id) from answers where user_id = 1)
+
+SELECT courses.id, courses.difficulty_level, answers.difficulty_level as answer_dl, courses.rating, answers.rating FROM courses JOIN answers on courses.field_of_activity = answers.field_of_activity where answers.id = (
+        select max(id) from answers where user_id = 1)
+
+get_recomendations
+create_questions
+
+
+SELECT courses.id as id_course, courses.title, courses.description, courses.difficulty_level, answers.difficulty_level as answer_difficulty_level, courses.duration_days, answers.duration_days as answer_duration_days, courses.rating, answers.rating as answer_rating FROM courses JOIN answers on courses.field_of_activity = answers.field_of_activity where answers.id = (
+        select max(id) from answers where user_id = 1)
+
+
+query := fmt.Sprintf(`SELECT courses.id as id_course, courses.title, courses.description,
+       courses.difficulty_level, answers.difficulty_level as answer_difficulty_level, courses.duration_days,
+       answers.duration_days as answer_duration_days, courses.rating, answers.rating as answer_rating FROM courses JOIN answers on courses.field_of_activity = answers.field_of_activity where answers.id = (
+        select max(id) from answers where user_id = $1)`)
+
+
+
+Имею структуру для ответа на анкетные вопросы для рекомендации курса:
+type Answer struct {
+  Id              int     json:"id"
+  UserId          int     json:"user_id"
+  FormId          int     json:"form_id"
+  DifficultyLevel int     json:"difficulty_level" db:"difficulty_level"
+  FieldOfActivity string  json:"field_of_activity" db:"field_of_activity"
+  DurationDays    int     json:"duration_days" db:"duration_days"
+  Lang            string  json:"lang"
+  Rating          float64 json:"rating"
+  Author          string  json:"author"
+}
+Использую метод контент-фильтрации на основе косинусного расстояния в Go для полей DifficultyLevel, DurationDays, Rating. Как использовать метод контент-фильтрации для полей FieldOfActivity, Lang, Author? Не использовать машинное обучение
+
+
+Для совмещения алгоритма Левенштейна и метода контент-фильтрации на основе косинусного расстояния для поля FieldOfActivity требуется следующее:
+
+- Применить алгоритм Левенштейна для нахождения расстояния между заданным значением поля FieldOfActivity и значениями этого поля в списках курсов.
+- Для каждого курса, у которого значение поля FieldOfActivity находится на расстоянии не более заданного порога, можно рассчитать косинусное расстояние между данным курсом и пользовательскими предпочтениями на основе полей DifficultyLevel, DurationDays и Rating.
+- Курсы, у которых наименьшее расстояние Левенштейна и высокое косинусное расстояние, могут быть рекомендованы пользователю.
+
+Пример кода для совмещения этих методов может выглядеть следующим образом:
+
+func recommendCourses(recs []dto.Course, user dto.Answer, fieldThreshold int, cosThreshold float64) []dto.Course {
+  var recommended []dto.Course
+
+  // Перебираем все курсы
+  for _, rec := range recs {
+    // Вычисляем расстояние Левенштейна между значениями поля FieldOfActivity
+    lev := levenshtein(rec.FieldOfActivity, user.FieldOfActivity)
+    if lev > fieldThreshold { // Если расстояние больше порога, то идем дальше
+      continue
+    }
+
+    // Расчет косинусного расстояния с предпочтениями пользователя
+    cosSim := cosineSimilarity(rec, user)
+    if cosSim >= cosThreshold { // Если косинусное расстояние больше порога, то добавляем в рекомендации
+      recommended = append(recommended, rec)
+    }
+  }
+
+  return recommended
+}
+
+
+fieldThreshold - это порог расстояния Левенштейна между значениями поля FieldOfActivity, при котором курс все еще может быть рекомендован пользователю.
+
+cosThreshold - это порог косинусного расстояния между курсом и пользовательскими предпочтениями, при котором курс будет рекомендован.
+
+
+
+Как совместить алгоритм Левенштейна для поля FieldOfActivity:
+func levenshtein(a, b string) int {
+  m, n := len(a), len(b)
+  if m == 0 {
+    return n
+  }
+  if n == 0 {
+    return m
+  }
+  if a == b {
+    return 0
+  }
+  var cost, lastdiag int
+  column := make([]int, n+1)
+  for y := 1; y <= n; y++ {
+    column[y] = y
+  }
+  for x := 1; x <= m; x++ {
+    column[0], lastdiag = x, x-1
+    for y := 1; y <= n; y++ {
+      cost = 1
+      if a[x-1] == b[y-1] {
+        cost = 0
+      }
+      column[y], lastdiag = min(column[y]+1,
+        min(column[y-1]+1, lastdiag+cost)), column[y]
+    }
+  }
+  return column[n]
+}
+
+func sim(a, b string) float64 {
+  lev := levenshtein(a, b)
+  return 1.0 - float64(lev) / float64(max(len(a), len(b)))
+}
+И метода контент-фильтрации на основе косинусного расстояния для полей DifficultyLevel, DurationDays, Rating:
+func (s *FormService) CreateRecommendation(userId int) ([]dto.RecommendationRequest, error) {
+  listCourses, userReferences, err := s.formRepo.CreateRecommendation(userId)
+  if err != nil {
+    return nil, err
+  }
+  recommendedCourses := recommendCourses(listCourses, userReferences)
+  res := GenerateRecommendations(recommendedCourses, userReferences)
+  return res, nil
+}
+
+func cosineSimilarity(rec dto.Course, user dto.Answer) float64 {
+  // вектор курса
+  courseVec := []float64{float64(rec.DifficultyLevel), float64(rec.DurationDays), rec.Rating}
+  // вектор предпочтений пользователя
+  userVec := []float64{float64(user.DifficultyLevel), float64(user.DurationDays), user.Rating}
+
+  // dot product
+  dotProduct := 0.0
+  // длина вектора курса
+  courseNorm := 0.0
+  // длина вектора предпочтений пользователя
+  userNorm := 0.0
+  // итерация по элементам векторов
+  for i := 0; i < len(courseVec); i++ {
+    dotProduct += courseVec[i] * userVec[i]
+    courseNorm += math.Pow(courseVec[i], 2)
+    userNorm += math.Pow(userVec[i], 2)
+  }
+
+  // вычисление длин векторов
+  courseNorm = math.Sqrt(courseNorm)
+  userNorm = math.Sqrt(userNorm)
+
+  // вычисление косинусного расстояния
+  cosSim := dotProduct / (courseNorm * userNorm)
+
+  return cosSim
+}
+
+func recommendCourses(recs []dto.Course, user dto.Answer) []dto.Course {
+  var recommended []dto.Course
+
+  // перебор всех курсов и расчет косинусного расстояния
+  for _, rec := range recs {
+    // проверить, если у курса совпадают требования пользователя
+    if rec.DifficultyLevel == user.DifficultyLevel &&
+      rec.DurationDays == user.DurationDays &&
+      rec.Rating == user.Rating {
+      recommended = append(recommended, rec)
+      continue
+    }
+
+    // расчет косинусного расстояния с предпочтениями пользователя
+    cosSim := cosineSimilarity(rec, user)
+    if cosSim >= 0.9 {
+      recommended = append(recommended, rec)
+    }
+  }
+  return recommended
+}

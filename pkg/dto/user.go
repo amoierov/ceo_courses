@@ -1,4 +1,4 @@
-package seo_courses
+package dto
 
 type User struct {
 	Id       int    `json:"-" db:"id"`

@@ -3,22 +3,22 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"seo_courses"
+	"seo_courses/pkg/dto"
 	"strconv"
 )
 
 func (h *Handler) createCourse(c *gin.Context) {
-	userId, err := getUserId(c)
+	/*userId, err := getUserId(c)
 	if err != nil {
 		return
-	}
-	var input seo_courses.Course
+	}*/
+	var input dto.Course
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	id, err := h.services.Course.Create(userId, input)
+	id, err := h.services.Course.Create(input)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -29,16 +29,16 @@ func (h *Handler) createCourse(c *gin.Context) {
 }
 
 type getAllListsResponse struct {
-	Data []seo_courses.Course `json:"data"`
+	Data []dto.Course `json:"data"`
 }
 
 func (h *Handler) getAllCourses(c *gin.Context) {
-	userId, err := getUserId(c)
+	/*userId, err := getUserId(c)
 	if err != nil {
 		return
-	}
+	}*/
 
-	courses, err := h.services.Course.GetAll(userId)
+	courses, err := h.services.Course.GetAll()
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -48,20 +48,42 @@ func (h *Handler) getAllCourses(c *gin.Context) {
 	})
 }
 
-func (h *Handler) getCourseById(c *gin.Context) {
+func (h *Handler) subscribeUser(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		return
+	}
+
+	var input dto.Subscribe
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err = h.services.Course.Subscribe(userId, input.CourseId)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, statusResponse{
+		Status: "ok",
+	})
+}
+
+func (h *Handler) getCoursesByIdUser(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	id, err := strconv.Atoi(c.Param("id"))
+	/*id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "invalid id param")
 		return
-	}
+	}*/
 
-	course, err := h.services.Course.GetById(userId, id)
+	course, err := h.services.Course.GetCoursesByIdUser(userId)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

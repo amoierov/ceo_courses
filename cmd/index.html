@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+</head>
+<body>
+<form id="myForm">
+    <label for="username">Name</label><br>
+    <input type="text" id="username" name="username"><br>
+
+    <label for="password">Password</label><br>
+    <input type="text" id="password" name="password"><br>
+
+    <input type="submit" value="Submit">
+
+</form>
+<form id="answer">
+    <select name="course_id" id="course">
+        <option value=1>Курс 1</option>
+        <option value=2>Курс 2</option>
+    </select>
+
+    <input type="submit" value="Submit">
+
+</form>
+<form id="logout">
+    <input type="submit" value="Logout">
+</form>
+<script>
+    let token = localStorage.getItem("token");
+</script>
+<script>
+    async function renderQuestions() {
+        const response = await fetch('http://localhost:8000/api/forms/questions/1', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        if (response.ok) {
+            const data = await response.json();
+            const table = document.createElement('table');
+            let tr = document.createElement('tr');
+            table.appendChild(tr);
+
+            let th = document.createElement('th');
+            tr.appendChild(th);
+            th.appendChild(document.createTextNode("id"));
+            th = document.createElement('th');
+            tr.appendChild(th);
+            th.appendChild(document.createTextNode("question"));
+            data.forEach(function (question) {
+                tr = document.createElement('tr');
+                table.appendChild(tr);
+                th = document.createElement('th');
+                th.appendChild(document.createTextNode(question["id"]));
+                tr.appendChild(th);
+                th = document.createElement('th');
+                th.appendChild(document.createTextNode(question["question"]));
+                tr.appendChild(th);
+
+
+                const form = document.createElement('form');
+                form.id = `question-form-${question["id"]}`;
+                const answerInput = document.createElement("input");
+                answerInput.type = "text";
+                answerInput.name = "author";
+                form.appendChild(answerInput);
+
+                const input = document.createElement("input");
+                input.type = "submit";
+                input.value = "Answer";
+                form.appendChild(input);
+
+                const select = document.createElement("select");
+                select.name = "field_of_activity";
+                let optionElement = document.createElement("option");
+                optionElement.text = "Data types";
+                optionElement.value = "dt";
+                select.options.add(optionElement);
+                optionElement = document.createElement("option");
+                optionElement.text = "Data types v2";
+                optionElement.value = "dt2";
+                select.options.add(optionElement);
+                form.appendChild(select);
+
+                th = document.createElement('th');
+                th.appendChild(form);
+                tr.appendChild(th);
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(form);
+                    const author = formData.get("author");
+                    const field_of_activity = formData.get("field_of_activity");
+                    const body = {"author": author, "field_of_activity": field_of_activity};
+
+                    const response = await fetch('http://localhost:8000/api/forms/preferences/', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(body)
+                    });
+
+                    if (response.ok) {
+                        const json = await response.json();
+                        console.log(`>>> ${json}`);
+                    } else {
+                        alert('Error submitting form');
+                    }
+                });
+            });
+
+
+
+            document.body.appendChild(table);
+
+        } else {
+            alert('Error submitting form');
+        }
+    }
+</script>
+<script>
+    async function renderCourses() {
+        const response = await fetch('http://localhost:8000/api/courses', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        if (response.ok) {
+            const coursesJson = await response.json();
+            const data = coursesJson["data"];
+            const table = document.createElement('table');
+            let tr = document.createElement('tr');
+            table.appendChild(tr);
+
+            let th = document.createElement('th');
+            tr.appendChild(th);
+            th.appendChild(document.createTextNode("title"));
+            th = document.createElement('th');
+            tr.appendChild(th);
+            th.appendChild(document.createTextNode("description"));
+            data.forEach(function (o) {
+                tr = document.createElement('tr');
+                table.appendChild(tr);
+                th = document.createElement('th');
+                th.appendChild(document.createTextNode(o["title"]));
+                tr.appendChild(th);
+                th = document.createElement('th');
+                th.appendChild(document.createTextNode(o["description"]));
+                tr.appendChild(th);
+            });
+
+            document.body.appendChild(table);
+
+        } else {
+            alert('Error submitting form');
+        }
+    }
+</script>
+<script>
+    function authorizeForm() {
+        const form = document.querySelector('#myForm');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            const body = {};
+
+            for (let pair of formData.entries()) {
+                body[pair[0]] = pair[1];
+            }
+
+            const response = await fetch('http://localhost:8000/auth/sign-in', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            });
+
+            if (response.ok) {
+                const tokenJson = await response.json();
+                token = tokenJson["token"];
+                localStorage.setItem("token", token);
+                console.log(`>>> ${token}`);
+                form.style.display = "none";
+                await renderCourses();
+                await renderQuestions();
+                // window.location.href = '/success';
+            } else {
+                alert('Error submitting form');
+            }
+        });
+
+
+    }
+    if (token) {
+        const form = document.querySelector('#myForm');
+        form.style.display = "none";
+        renderCourses();
+        renderQuestions();
+    } else {
+        authorizeForm();
+    }
+
+</script>
+<script>
+    function selectCourseForm() {
+        const form = document.querySelector('#answer');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            const courseId = parseInt(formData.get("course_id"));
+            const body = {"course_id": courseId};
+
+
+            const response = await fetch('http://localhost:8000/api/courses/subscribe', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            });
+
+            if (response.ok) {
+                const json = await response.json();
+                console.log(`>>> ${json}`);
+            } else {
+                alert('Error submitting form');
+            }
+        });
+    }
+    selectCourseForm();
+</script>
+<script>
+    function logout() {
+        const form = document.querySelector('#logout');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            localStorage.setItem("token", "");
+            location.reload();
+        });
+    }
+    logout();
+</script>
+</body>
+</html>

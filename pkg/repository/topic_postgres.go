@@ -3,7 +3,7 @@ package repository
 import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
-	"seo_courses"
+	"seo_courses/pkg/dto"
 )
 
 type TopicPostgres struct {
@@ -14,7 +14,7 @@ func NewTopicPostgres(db *sqlx.DB) *TopicPostgres {
 	return &TopicPostgres{db: db}
 }
 
-func (r *TopicPostgres) Create(courseId int, topic seo_courses.Topic) (int, error) {
+func (r *TopicPostgres) Create(courseId int, topic dto.Topic) (int, error) {
 	var id int
 	query := fmt.Sprintf("INSERT INTO %s (course_id , title, content, materials, assignments) values ($1, $2, $3, $4, $5) RETURNING id", topicsTable)
 

@@ -3,11 +3,19 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"seo_courses"
+	"seo_courses/pkg/dto"
 )
 
+func (h *Handler) index(c *gin.Context) {
+	c.File("C:\\Users\\kasat\\OneDrive\\Рабочий стол\\seo_courses\\cmd\\index.html")
+}
+
+func (h *Handler) admin(c *gin.Context) {
+	c.File("C:\\Users\\kasat\\OneDrive\\Рабочий стол\\seo_courses\\cmd\\admin.html")
+}
+
 func (h *Handler) signUp(c *gin.Context) {
-	var input seo_courses.User
+	var input dto.User
 
 	if err := c.BindJSON(&input); err != nil { //BindJSON - метод парсинга тела json. Принимает ссылку на стуктуру, куда нужно парсить
 		newErrorResponse(c, http.StatusBadRequest, err.Error())

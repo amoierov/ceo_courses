@@ -5,7 +5,6 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"os"
 	"seo_courses"
 	"seo_courses/pkg/handler"
 	"seo_courses/pkg/repository"
@@ -29,7 +28,8 @@ func main() {
 		Username: viper.GetString("db.username"),
 		DBName:   viper.GetString("db.dbname"),
 		SSLMode:  viper.GetString("db.sslmode"),
-		Password: os.Getenv("DB_PASSWORD"),
+		//Password: os.Getenv("DB_PASSWORD"),
+		Password: "qwerty",
 	})
 	if err != nil {
 		logrus.Fatalf("failed to initialize db: %s", err.Error())
@@ -43,6 +43,9 @@ func main() {
 	if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
 		logrus.Fatalf("error occured while running http server: %s", err.Error())
 	}
+	//http.HandleFunc("/front", func(w http.ResponseWriter, r *http.Request) {
+	//	http.ServeFile(w, r, "index.html")
+	//})
 }
 
 func InitConfig() error {

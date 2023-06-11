@@ -10,6 +10,8 @@ const (
 	coursesTable     = "courses"
 	userCoursesTable = "user_courses"
 	topicsTable      = "topics"
+	formsTable       = "form"
+	answersTable     = "answers"
 )
 
 type Config struct {

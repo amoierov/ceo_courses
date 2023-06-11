@@ -3,7 +3,7 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"seo_courses"
+	"seo_courses/pkg/dto"
 )
 
 func (h *Handler) createTopic(c *gin.Context) {
@@ -12,7 +12,7 @@ func (h *Handler) createTopic(c *gin.Context) {
 		return
 	}
 
-	var input seo_courses.Topic
+	var input dto.Topic
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
