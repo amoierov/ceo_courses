@@ -20,16 +20,18 @@
     <input type="submit" value="Logout">
 </form>
 <br><br>
-<form id="answer">
-    <input type="submit" value="Submit">
+<!--<form id="answer">-->
+<!--    <input type="submit" value="Submit">-->
 
-</form>
+<!--</form>-->
 
 <script>
     let token = localStorage.getItem("token");
 </script>
 <script>
     async function renderQuestions() {
+        selectCourseForm();
+
         const form = document.createElement('form');
         form.id = `question-form`;
         form.addEventListener('submit', async (e) => {
@@ -309,7 +311,13 @@
 </script>
 <script>
     function selectCourseForm() {
-        const form = document.querySelector('#answer');
+        const form = document.createElement("form");
+        form.id = "answer";
+        const ai= document.createElement("input");
+        ai.type = "submit";
+        ai.value = "Submit";
+        form.appendChild(ai);
+        document.body.appendChild(form);
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -335,7 +343,6 @@
             }
         });
     }
-    selectCourseForm();
 </script>
 <script>
     function logout() {
