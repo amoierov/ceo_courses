@@ -94,15 +94,40 @@ func (h *Handler) getCoursesByIdUser(c *gin.Context) {
 }
 
 func (h *Handler) updateCourse(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid id param")
+		return
+	}
 
-}
+	var input dto.UpdateCourse
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
 
-func (h *Handler) deleteCourse(c *gin.Context) {
-	userId, err := getUserId(c)
+	err = h.services.Course.UpdateCourse(id, input)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	c.JSON(http.StatusOK, statusResponse{
+		Status: "ok",
+	})
+}
+
+func (h *Handler) getAuthors(c *gin.Context) {
+	authors, err := h.services.Course.GetAuthors()
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, authors)
+}
+
+func (h *Handler) deleteCourse(c *gin.Context) {
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -110,7 +135,7 @@ func (h *Handler) deleteCourse(c *gin.Context) {
 		return
 	}
 
-	err = h.services.Course.Delete(userId, id)
+	err = h.services.Course.Delete(id)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

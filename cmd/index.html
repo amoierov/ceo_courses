@@ -40,6 +40,13 @@
                 'Content-Type': 'application/json'
             }
         });
+        const authors =await (await fetch('http://localhost:8000/api/courses/author', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })).json();
         if (response.ok) {
             const data = await response.json();
             const table = document.createElement('table');
@@ -61,8 +68,14 @@
                 th = document.createElement('th');
                 th.appendChild(document.createTextNode(question["question"]));
                 tr.appendChild(th);
+                if (question["id"] == 8) {
+                    addComboForm(question)
+                } else {
+                    addTextForm(question)
+                }
+            });
 
-
+            function addTextForm(question) {
                 const form = document.createElement('form');
                 form.id = `question-form-${question["id"]}`;
                 const answerInput = document.createElement("input");
@@ -74,18 +87,6 @@
                 input.type = "submit";
                 input.value = "Answer";
                 form.appendChild(input);
-
-                const select = document.createElement("select");
-                select.name = "field_of_activity";
-                let optionElement = document.createElement("option");
-                optionElement.text = "Data types";
-                optionElement.value = "dt";
-                select.options.add(optionElement);
-                optionElement = document.createElement("option");
-                optionElement.text = "Data types v2";
-                optionElement.value = "dt2";
-                select.options.add(optionElement);
-                form.appendChild(select);
 
                 th = document.createElement('th');
                 th.appendChild(form);
@@ -113,7 +114,56 @@
                         alert('Error submitting form');
                     }
                 });
-            });
+            }
+
+            function addComboForm(question) {
+                const form = document.createElement('form');
+                form.id = `question-form-${question["id"]}`;
+
+                const select = document.createElement("select");
+                select.name = "author";
+                for (let i in authors) {
+                    let optionElement = document.createElement("option");
+                    optionElement.text = authors[i].author;
+                    optionElement.value = authors[i].author;
+                    select.options.add(optionElement);
+                }
+                form.appendChild(select);
+
+                const input = document.createElement("input");
+                input.type = "submit";
+                input.value = "Answer";
+                form.appendChild(input);
+
+
+
+                th = document.createElement('th');
+                th.appendChild(form);
+                tr.appendChild(th);
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(form);
+                    const author = formData.get("author");
+                    const field_of_activity = formData.get("field_of_activity");
+                    const body = {"author": author, "field_of_activity": field_of_activity};
+
+                    const response = await fetch('http://localhost:8000/api/forms/preferences/', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(body)
+                    });
+
+                    if (response.ok) {
+                        const json = await response.json();
+                        console.log(`>>> ${json}`);
+                    } else {
+                        alert('Error submitting form');
+                    }
+                });
+            }
 
 
 

@@ -14,8 +14,10 @@ type Course interface {
 	Create(course dto.Course) (int, error)
 	GetAll() ([]dto.Course, error)
 	GetCoursesByIdUser(userId int) ([]dto.Course, error)
-	Delete(userId, courseId int) error
+	Delete(courseId int) error
+	UpdateCourse(courseId int, input dto.UpdateCourse) error
 	Subscribe(userId, courseId int) error
+	GetAuthors() ([]dto.Author, error)
 }
 
 type Topic interface {

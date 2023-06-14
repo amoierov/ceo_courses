@@ -5,33 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="553dbdef-a0ea-4ea1-bc93-5ecde6b21d79" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/cmd/admin.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmd/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pkg/dto/courses.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pkg/dto/recommendation.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pkg/dto/subscribe.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pkg/handler/recommendation.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pkg/repository/recommendation_postgres.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pkg/service/recommendation_service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/courses.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/handler/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/handler/auth.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/dto/courses.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/dto/courses.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pkg/handler/course.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/handler/course.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pkg/handler/handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/handler/handler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/handler/middleware.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/handler/middleware.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/handler/topic.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/handler/topic.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/repository/auth_postgres.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/repository/auth_postgres.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pkg/repository/course_postgres.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/repository/course_postgres.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/repository/postgres.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/repository/postgres.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pkg/repository/repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/repository/repository.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pkg/repository/topic_postgres.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/repository/topic_postgres.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/service/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/service/auth.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pkg/service/course.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/service/course.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pkg/service/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/service/service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/service/topic.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/service/topic.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schema/000001_init.down.sql" beforeDir="false" afterPath="$PROJECT_DIR$/schema/000001_init.down.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schema/000001_init.up.sql" beforeDir="false" afterPath="$PROJECT_DIR$/schema/000001_init.up.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/dto/user.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,7 +75,7 @@
       <recent name="C:\Users\kasat\OneDrive\Рабочий стол\seo_courses\pkg\dto" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Build.go build main.go">
+  <component name="RunManager" selected="JavaScript Debug.index.html">
     <configuration name="go build main.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="seo_courses" />
       <working_directory value="$PROJECT_DIR$" />
@@ -116,8 +99,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Build.go build main.go" />
         <item itemvalue="JavaScript Debug.index.html" />
+        <item itemvalue="Go Build.go build main.go" />
         <item itemvalue="Go Build.go build seo_courses/cmd" />
       </list>
     </recent_temporary>

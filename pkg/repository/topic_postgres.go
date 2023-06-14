@@ -16,7 +16,7 @@ func NewTopicPostgres(db *sqlx.DB) *TopicPostgres {
 
 func (r *TopicPostgres) Create(courseId int, topic dto.Topic) (int, error) {
 	var id int
-	query := fmt.Sprintf("INSERT INTO %s (course_id , title, content, materials, assignments) values ($1, $2, $3, $4, $5) RETURNING id", topicsTable)
+	query := fmt.Sprintf("INSERT INTO %s (course_id , title, contents, materials, assignments) values ($1, $2, $3, $4, $5) RETURNING id", topicsTable)
 
 	row := r.db.QueryRow(query, courseId, topic.Title, topic.Content, topic.Materials, topic.Assignments) //выполнение запроса и подставление аргументов в плейсхолдеры
 	if err := row.Scan(&id); err != nil {

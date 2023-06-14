@@ -47,6 +47,32 @@ func (r *CoursePostgres) Create(course dto.Course) (int, error) {
 	return id, nil
 }
 
+func (r *CoursePostgres) UpdateCourse(courseId int, input dto.UpdateCourse) error {
+	query := fmt.Sprintf("UPDATE %s SET title=$1, description=$2, difficulty_level=$3, field_of_activity=$4, duration_days=$5, lang=$6, rating=$7, author=$8 WHERE id=$9", coursesTable)
+	res, err := r.db.Exec(query, input.Title, input.Description, input.DifficultyLevel, input.FieldOfActivity, input.DurationDays, input.Lang, input.Rating, input.Author, courseId)
+	if err != nil {
+		return err
+	}
+	numRows, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if numRows == 0 {
+		return fmt.Errorf("Course with ID=%d not found", courseId)
+	}
+	return nil
+}
+
+func (r *CoursePostgres) GetAuthors() ([]dto.Author, error) {
+	var list []dto.Author
+
+	query := `SELECT courses.id, courses.author
+              FROM courses`
+	err := r.db.Select(&list, query)
+
+	return list, err
+}
+
 func (r *CoursePostgres) Subscribe(userId, courseId int) error {
 	query := fmt.Sprintf("INSERT INTO %s (user_id, course_id) values ($1, $2)", userCoursesTable)
 	_, err := r.db.Exec(query, userId, courseId)
@@ -72,10 +98,9 @@ func (r *CoursePostgres) GetCoursesByIdUser(userId int) ([]dto.Course, error) {
 	return list, err
 }
 
-func (r *CoursePostgres) Delete(userId, courseId int) error {
-	query := fmt.Sprintf("DELETE FROM %s tl USING %s ul WHERE tl.id = ul.course_id AND ul.user_id=$1 AND ul.course_id=$2",
-		coursesTable, userCoursesTable)
-	_, err := r.db.Exec(query, userId, courseId)
+func (r *CoursePostgres) Delete(courseId int) error {
+	query := fmt.Sprintf("DELETE FROM courses WHERE id = $1")
+	_, err := r.db.Exec(query, courseId)
 
 	return err
 }

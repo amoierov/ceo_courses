@@ -30,6 +30,14 @@ func (s *CourseService) GetCoursesByIdUser(userId int) ([]dto.Course, error) {
 	return s.repo.GetCoursesByIdUser(userId)
 }
 
-func (s *CourseService) Delete(userId, courseId int) error {
-	return s.repo.Delete(userId, courseId)
+func (s *CourseService) Delete(courseId int) error {
+	return s.repo.Delete(courseId)
+}
+
+func (s *CourseService) UpdateCourse(courseId int, input dto.UpdateCourse) error {
+	return s.repo.UpdateCourse(courseId, input)
+}
+
+func (s *CourseService) GetAuthors() ([]dto.Author, error) {
+	return s.repo.GetAuthors()
 }

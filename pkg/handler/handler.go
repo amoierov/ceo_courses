@@ -42,8 +42,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			courses.GET("/user", h.getCoursesByIdUser)
 			courses.PUT("/:id", h.updateCourse)
 			courses.DELETE("/:id", h.deleteCourse)
-
 			courses.POST("/subscribe", h.subscribeUser)
+			courses.GET("/author", h.getAuthors)
 
 			topics := courses.Group(":id/topics")
 			{
