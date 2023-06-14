@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -13,6 +13,34 @@
 
     <label for="password">Password</label><br>
     <input type="text" id="password" name="password"><br>
+
+    <input type="submit" value="Submit">
+
+</form>
+<form id="createCourse">
+    <label for="title">title</label><br>
+    <input type="text" id="title" name="title"><br>
+
+    <label for="description">description</label><br>
+    <input type="text" id="description" name="description"><br>
+
+    <label for="difficulty_level">difficulty_level</label><br>
+    <input type="text" id="difficulty_level" name="difficulty_level"><br>
+
+    <label for="field_of_activity">field_of_activity</label><br>
+    <input type="text" id="field_of_activity" name="field_of_activity"><br>
+
+    <label for="duration_days">duration_days</label><br>
+    <input type="text" id="duration_days" name="duration_days"><br>
+
+    <label for="lang">lang</label><br>
+    <input type="text" id="lang" name="lang"><br>
+
+    <label for="rating">rating</label><br>
+    <input type="text" id="rating" name="rating"><br>
+
+    <label for="author">author</label><br>
+    <input type="text" id="author" name="author"><br>
 
     <input type="submit" value="Submit">
 
@@ -90,5 +118,41 @@
     }
 
 </script>
+<script>
+    function editForm() {
+        const editForm = document.getElementById("createCourse");
+        editForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(editForm);
+            const body = {
+                "author": formData.get("author"),
+                "title": formData.get("title"),
+                "description": formData.get("description"),
+                "field_of_activity": formData.get("field_of_activity"),
+                "duration_days": parseInt(formData.get("duration_days")),
+                "lang": formData.get("lang"),
+                "rating": parseFloat(formData.get("rating")),
+                "difficulty_level": parseInt(formData.get("difficulty_level")),
+            };
+
+            const response = await fetch('http://localhost:8000/api/courses', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            });
+
+            if (response.ok) {
+                await renderCourses();
+            } else {
+                alert('Error submitting form');
+            }
+        });
+    }
+    editForm();
+    </script>
 </body>
 </html>

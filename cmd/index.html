@@ -16,23 +16,99 @@
     <input type="submit" value="Submit">
 
 </form>
-<form id="answer">
-    <select name="course_id" id="course">
-        <option value=1>Курс 1</option>
-        <option value=2>Курс 2</option>
-    </select>
-
-    <input type="submit" value="Submit">
-
-</form>
 <form id="logout">
     <input type="submit" value="Logout">
 </form>
+<br><br>
+<form id="answer">
+    <input type="submit" value="Submit">
+
+</form>
+
 <script>
     let token = localStorage.getItem("token");
 </script>
 <script>
     async function renderQuestions() {
+        const form = document.createElement('form');
+        form.id = `question-form`;
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const author = formData.get("author");
+            const field_of_activity = formData.get("field_of_activity");
+            const body = {
+                "form_id": 1,
+                "author": author,
+                "field_of_activity": field_of_activity,
+                "duration_days": parseInt(formData.get("duration_days")),
+                "lang": formData.get("lang"),
+                "rating": parseFloat(formData.get("rating")),
+                "difficulty_level": parseInt(formData.get("difficulty_level")),
+            };
+
+            const response = await fetch('http://localhost:8000/api/forms/preferences', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            });
+
+            if (response.ok) {
+                const recommendations =await (await fetch('http://localhost:8000/api/forms/preferences/recommendation', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                })).json();
+                const div = document.createElement("div");
+                const recomendationsId = "id-rec";
+                div.id = recomendationsId
+                let prevEl = document.getElementById(recomendationsId);
+                if (prevEl) {
+                    prevEl.remove();
+                }
+                const table = document.createElement('table');
+                let tr = document.createElement('tr');
+                table.appendChild(tr);
+                if (recommendations.size === 0) {
+                    return;
+                }
+                Object.keys(recommendations[0]).forEach(function (key) {
+                    let th = document.createElement('th');
+                    th.appendChild(document.createTextNode(key));
+                    tr.appendChild(th);
+                });
+                for (let i in recommendations) {
+                    tr = document.createElement('tr');
+                    table.appendChild(tr);
+                    const values = Object.values(recommendations[i])
+                    for(let j in values ) {
+                        let value = values[j];
+                        let th = document.createElement('th');
+                        if (j == 0) {
+                            let a = document.createElement("a");
+                            a.href = `http://localhost:8000/courses/${value}/topics`;
+                            a.appendChild(document.createTextNode(value))
+                            th.appendChild(a);
+                        } else {
+                            th.appendChild(document.createTextNode(value));
+
+                        }
+                        tr.appendChild(th);
+                    }
+                }
+
+                div.appendChild(table);
+                form.appendChild(div);
+            } else {
+                alert('Error submitting form');
+            }
+        });
+
         const response = await fetch('http://localhost:8000/api/forms/questions/1', {
             method: 'GET',
             headers: {
@@ -76,49 +152,33 @@
             });
 
             function addTextForm(question) {
-                const form = document.createElement('form');
-                form.id = `question-form-${question["id"]}`;
                 const answerInput = document.createElement("input");
                 answerInput.type = "text";
-                answerInput.name = "author";
-                form.appendChild(answerInput);
+                switch(question["id"]) {
+                    case 1:
+                        answerInput.name = "field_of_activity";
+                        break;
+                    case 5:
+                        answerInput.name = "difficulty_level";
+                        break;
+                    case 6:
+                        answerInput.name = "lang";
+                        break;
+                    case 7:
+                        answerInput.name = "duration_days";
+                        break;
+                    case 9:
+                        answerInput.name = "rating";
+                        break;
+                }
 
-                const input = document.createElement("input");
-                input.type = "submit";
-                input.value = "Answer";
-                form.appendChild(input);
 
                 th = document.createElement('th');
-                th.appendChild(form);
+                th.appendChild(answerInput);
                 tr.appendChild(th);
-                form.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    const formData = new FormData(form);
-                    const author = formData.get("author");
-                    const field_of_activity = formData.get("field_of_activity");
-                    const body = {"author": author, "field_of_activity": field_of_activity};
-
-                    const response = await fetch('http://localhost:8000/api/forms/preferences/', {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(body)
-                    });
-
-                    if (response.ok) {
-                        const json = await response.json();
-                        console.log(`>>> ${json}`);
-                    } else {
-                        alert('Error submitting form');
-                    }
-                });
             }
 
-            function addComboForm(question) {
-                const form = document.createElement('form');
-                form.id = `question-form-${question["id"]}`;
+            function addComboForm() {
 
                 const select = document.createElement("select");
                 select.name = "author";
@@ -128,46 +188,20 @@
                     optionElement.value = authors[i].author;
                     select.options.add(optionElement);
                 }
-                form.appendChild(select);
-
-                const input = document.createElement("input");
-                input.type = "submit";
-                input.value = "Answer";
-                form.appendChild(input);
-
-
 
                 th = document.createElement('th');
-                th.appendChild(form);
+                th.appendChild(select);
                 tr.appendChild(th);
-                form.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    const formData = new FormData(form);
-                    const author = formData.get("author");
-                    const field_of_activity = formData.get("field_of_activity");
-                    const body = {"author": author, "field_of_activity": field_of_activity};
 
-                    const response = await fetch('http://localhost:8000/api/forms/preferences/', {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(body)
-                    });
-
-                    if (response.ok) {
-                        const json = await response.json();
-                        console.log(`>>> ${json}`);
-                    } else {
-                        alert('Error submitting form');
-                    }
-                });
             }
 
 
-
-            document.body.appendChild(table);
+            const input = document.createElement("input");
+            input.type = "submit";
+            input.value = "Answer";
+            form.appendChild(table);
+            form.appendChild(input);
+            document.body.appendChild(form);
 
         } else {
             alert('Error submitting form');
@@ -186,6 +220,12 @@
         if (response.ok) {
             const coursesJson = await response.json();
             const data = coursesJson["data"];
+
+            const answerForm = document.getElementById("answer");
+            const select = document.createElement("select");
+            select.name = "course_id";
+            answerForm.appendChild(select)
+
             const table = document.createElement('table');
             let tr = document.createElement('tr');
             table.appendChild(tr);
@@ -205,6 +245,11 @@
                 th = document.createElement('th');
                 th.appendChild(document.createTextNode(o["description"]));
                 tr.appendChild(th);
+
+                let optionElement = document.createElement("option");
+                optionElement.text = o["title"];
+                optionElement.value = o["id"];
+                select.options.add(optionElement);
             });
 
             document.body.appendChild(table);
@@ -214,7 +259,7 @@
         }
     }
 </script>
-<script>
+<script type="module">
     function authorizeForm() {
         const form = document.querySelector('#myForm');
 
@@ -242,8 +287,8 @@
                 localStorage.setItem("token", token);
                 console.log(`>>> ${token}`);
                 form.style.display = "none";
-                await renderCourses();
                 await renderQuestions();
+                await renderCourses();
                 // window.location.href = '/success';
             } else {
                 alert('Error submitting form');
@@ -255,8 +300,8 @@
     if (token) {
         const form = document.querySelector('#myForm');
         form.style.display = "none";
-        renderCourses();
-        renderQuestions();
+        await renderQuestions();
+        await renderCourses();
     } else {
         authorizeForm();
     }

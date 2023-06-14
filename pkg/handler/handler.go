@@ -33,6 +33,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		auth.POST("/sign-up", h.signUp)
 		auth.POST("/sign-in", h.signIn)
 	}
+	router.GET("/courses/1/topics", h.getTopicsByCourse)
+
 	api := router.Group("/api", h.userIdentity)
 	{
 		courses := api.Group("/courses")
