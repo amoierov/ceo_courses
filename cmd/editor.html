@@ -6,7 +6,8 @@
 
 </head>
 <body>
-<strong>ADMIN</strong>
+<strong>EDITOR</strong>
+<br>
 <form id="myForm">
     <label for="username">Name</label><br>
     <input type="text" id="username" name="username"><br>
@@ -17,40 +18,8 @@
     <input type="submit" value="Submit">
 
 </form>
-<form id="createCourse" style="display: none">
-    <label for="title">title</label><br>
-    <input type="text" id="title" name="title"><br>
-
-    <label for="description">description</label><br>
-    <input type="text" id="description" name="description"><br>
-
-    <label for="difficulty_level">difficulty_level</label><br>
-    <input type="text" id="difficulty_level" name="difficulty_level"><br>
-
-    <label for="field_of_activity">field_of_activity</label><br>
-    <input type="text" id="field_of_activity" name="field_of_activity"><br>
-
-    <label for="duration_days">duration_days</label><br>
-    <input type="text" id="duration_days" name="duration_days"><br>
-
-    <label for="lang">lang</label><br>
-    <input type="text" id="lang" name="lang"><br>
-
-    <label for="rating">rating</label><br>
-    <input type="text" id="rating" name="rating"><br>
-
-    <label for="author">author</label><br>
-    <input type="text" id="author" name="author"><br>
-
-    <input type="submit" value="Submit">
-
-</form>
-<br>
-<form id="deleteCourse" style="display: none">
 <label for="course_id">course id</label><br>
 <input type="number" id="course_id" name="course_id"><br>
-    <input type="submit" value="Submit">
-</form>
 <form id="editCourse" style="display: none">
     <label for="title">title</label><br>
     <input type="text" id="title" name="title"><br>
@@ -107,8 +76,6 @@
             console.log(`>>> ${token}`);
             form.style.display="none";
             await renderCourses();
-            document.getElementById("createCourse").style.display= "";
-            document.getElementById("deleteCourse").style.display= "";
             document.getElementById("editCourse").style.display= "";
             // window.location.href = '/success';
         } else {
@@ -138,12 +105,7 @@
 
             let th = document.createElement('th');
             tr.appendChild(th);
-            th.appendChild(document.createTextNode("id"));
-
-            th = document.createElement('th');
-            tr.appendChild(th);
             th.appendChild(document.createTextNode("title"));
-
             th = document.createElement('th');
             tr.appendChild(th);
             th.appendChild(document.createTextNode("description"));
@@ -151,13 +113,8 @@
                 tr = document.createElement('tr');
                 table.appendChild(tr);
                 th = document.createElement('th');
-                th.appendChild(document.createTextNode(o["id"]));
-                tr.appendChild(th);
-
-                th = document.createElement('th');
                 th.appendChild(document.createTextNode(o["title"]));
                 tr.appendChild(th);
-
                 th = document.createElement('th');
                 th.appendChild(document.createTextNode(o["description"]));
                 tr.appendChild(th);
@@ -171,68 +128,6 @@
     }
 
 </script>
-<script>
-    function editForm() {
-        const editForm = document.getElementById("createCourse");
-        editForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const formData = new FormData(editForm);
-            const body = {
-                "author": formData.get("author"),
-                "title": formData.get("title"),
-                "description": formData.get("description"),
-                "field_of_activity": formData.get("field_of_activity"),
-                "duration_days": parseInt(formData.get("duration_days")),
-                "lang": formData.get("lang"),
-                "rating": parseFloat(formData.get("rating")),
-                "difficulty_level": parseInt(formData.get("difficulty_level")),
-            };
-
-            const response = await fetch('http://localhost:8000/api/courses', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(body)
-            });
-
-            if (response.ok) {
-                await renderCourses();
-            } else {
-                alert('Error submitting form');
-            }
-        });
-    }
-    editForm();
-
-    function deleteForm() {
-        const editForm = document.getElementById("deleteCourse");
-        editForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-
-            const courseId = document.getElementById('course_id').value;
-            const url = `http://localhost:8000/api/courses/${courseId}`
-
-            const response = await fetch(url, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-            });
-
-            if (response.ok) {
-                await renderCourses();
-            } else {
-                alert('Error submitting form');
-            }
-        });
-    }
-    deleteForm();
-    </script>
 <script>
     function editForm() {
         const editForm = document.getElementById("editCourse");
@@ -270,6 +165,6 @@
         });
     }
     editForm();
-</script>
+    </script>
 </body>
 </html>

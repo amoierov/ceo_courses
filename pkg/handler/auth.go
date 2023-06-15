@@ -14,6 +14,10 @@ func (h *Handler) admin(c *gin.Context) {
 	c.File("C:\\Users\\kasat\\OneDrive\\Рабочий стол\\seo_courses\\cmd\\admin.html")
 }
 
+func (h *Handler) editor(c *gin.Context) {
+	c.File("C:\\Users\\kasat\\OneDrive\\Рабочий стол\\seo_courses\\cmd\\editor.html")
+}
+
 func (h *Handler) signUp(c *gin.Context) {
 	var input dto.User
 

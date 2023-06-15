@@ -28,6 +28,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	//router.Use(corsHeader)
 	router.GET("/user", h.index)
 	router.GET("/admin", h.admin)
+	router.GET("/editor", h.editor)
 	auth := router.Group("/auth")
 	{
 		auth.POST("/sign-up", h.signUp)
