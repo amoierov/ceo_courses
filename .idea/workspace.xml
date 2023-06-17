@@ -4,12 +4,8 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="553dbdef-a0ea-4ea1-bc93-5ecde6b21d79" name="Changes" comment="123">
-      <change afterPath="$PROJECT_DIR$/cmd/editor.html" afterDir="false" />
+    <list default="true" id="553dbdef-a0ea-4ea1-bc93-5ecde6b21d79" name="Changes" comment="+admin + editor">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/admin.html" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/admin.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/handler/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/handler/auth.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/handler/handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/handler/handler.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -117,7 +113,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="123" />
-    <option name="LAST_COMMIT_MESSAGE" value="123" />
+    <MESSAGE value="+admin + editor" />
+    <option name="LAST_COMMIT_MESSAGE" value="+admin + editor" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
